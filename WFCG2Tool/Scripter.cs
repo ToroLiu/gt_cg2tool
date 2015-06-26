@@ -6,9 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using WindowsInput;
-using WindowsInput.Native;
-
 namespace WFCG2Tool
 {
     // 可被pause
@@ -35,7 +32,7 @@ namespace WFCG2Tool
             logViewer.Add("Scripter Init()");
             initOK = true;
 
-            hHwnd = WindowHelper.FindWindow(null, "魔力寶貝II");
+            hHwnd = Native.FindWindow(null, "魔力寶貝II");
             if (hHwnd == IntPtr.Zero)
             {
                 logViewer.Add("Failed to get window.");
@@ -45,12 +42,11 @@ namespace WFCG2Tool
 
             pause = false;
             logViewer.Add("Get window success.");
-            WindowHelper.SetForegroundWindow(hHwnd);
+            Native.SetForegroundWindow(hHwnd);
         }
 
         private static readonly Random rand = new Random();
-        InputSimulator aIS = new InputSimulator();
-
+        
         private static int invertDir = 0;
         public void RunIt() {
 
@@ -63,6 +59,12 @@ namespace WFCG2Tool
                 {2, VirtualKeyCode.UP },
                 {3, VirtualKeyCode.DOWN },
             };
+            Dictionary<VirtualKeyCode, ScanCode> scanMap = new Dictionary<VirtualKeyCode, ScanCode>() {
+                {VirtualKeyCode.LEFT, ScanCode.LEFT },
+                {VirtualKeyCode.RIGHT, ScanCode.RIGHT },
+                {VirtualKeyCode.UP, ScanCode.UP },
+                {VirtualKeyCode.DOWN, ScanCode.DOWN },
+            };
 
             // Strategy 1: Left & Right
             //invertDir = (invertDir + 1) % 2;
@@ -74,64 +76,29 @@ namespace WFCG2Tool
             int loopMax = 3;
                  
             VirtualKeyCode key = dirMap[dir];
+            ScanCode scKey = scanMap[key];
+
             logViewer.Add(key.ToString());
 
-            aIS.Keyboard.KeyDown(VirtualKeyCode.LCONTROL);
-            for (int i = 0; i < loopMax && !pause; i++)
-            {
-                aIS.Keyboard.KeyDown(key);
+            Native.keybd_event((byte)VirtualKeyCode.LCONTROL, (byte)ScanCode.LCONTROL, 0, 0);
+            for (int i = 0; i < loopMax; ++i) {
                 
-                int ms = 400 + rand.Next() % 100;
-                Thread.Sleep(ms);
-
-                aIS.Keyboard.KeyUp(key);
+                Native.keybd_event((byte)key, (byte)scKey, 0, 0);
+                Application.DoEvents();
+                Thread.Sleep(500 + rand.Next() % 100);
+                Native.keybd_event((byte)key, (byte)scKey, (int)KEYEVENTF.KEYUP, 0);
+                Application.DoEvents();
             }
-            aIS.Keyboard.KeyUp(VirtualKeyCode.LCONTROL);
-
-            /*
-            Dictionary<int, string> dirMap = new Dictionary<int, string>() {
-                {0, @"^{up}" },
-                {1, @"^{down}" },
-                {2, @"^{left}" },
-                {3, @"^{right}" },
-            };
-            int dir = rand.Next() % 4;
-            String cmd = dirMap[dir];
-            logViewer.Add("cmd: " + cmd);
-            SendKeys.SendWait(cmd);
-            */
-            
-            /*
-            Dictionary<int, int> dirMap = new Dictionary<int, int>() {
-                {0, WindowHelper.VK_UP },
-                {1, WindowHelper.VK_LEFT },
-                {2, WindowHelper.VK_RIGHT },
-                {3, WindowHelper.VK_DOWN },
-            };
-
-            int dir = rand.Next() % 4;
-            IntPtr curDir = (IntPtr)dirMap[dir];
-            lastDir = curDir;
-
-            logViewer.Add("KEY_DOWN: " + dir);
-            WindowHelper.PostMessage(hHwnd, WindowHelper.WM_KEYDOWN, (IntPtr)VirtualKeyCode.LCONTROL, (IntPtr)0x001D0001);
-            WindowHelper.PostMessage(hHwnd, WindowHelper.WM_KEYDOWN, curDir, (IntPtr)0x00170001);
-
-            Thread.Sleep(500 + rand.Next() % 50);
-
-            logViewer.Add("KEY_UP: " + dir);
-            WindowHelper.PostMessage(hHwnd, WindowHelper.WM_KEYUP, curDir, (IntPtr)0x00170001);
-            WindowHelper.PostMessage(hHwnd, WindowHelper.WM_KEYUP, (IntPtr)VirtualKeyCode.LCONTROL, (IntPtr)0x001D0001); 
-            */
+            Native.keybd_event((byte)VirtualKeyCode.LCONTROL, 0, (int)KEYEVENTF.KEYUP, 0);
+            Application.DoEvents();
         }
 
         public void Stop() {
             pause = true;
-            aIS.Keyboard.KeyUp(VirtualKeyCode.LCONTROL);
-
+            
             /*
-            WindowHelper.SendMessage(hHwnd, WindowHelper.WM_KEYUP, (IntPtr)WindowHelper.VK_CTRL, IntPtr.Zero);
-            WindowHelper.SendMessage(hHwnd, WindowHelper.WM_KEYUP, lastDir, IntPtr.Zero);
+            Native.SendMessage(hHwnd, Native.WM_KEYUP, (IntPtr)Native.VK_CTRL, IntPtr.Zero);
+            Native.SendMessage(hHwnd, Native.WM_KEYUP, lastDir, IntPtr.Zero);
             */
         }
     }

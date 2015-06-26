@@ -39,11 +39,11 @@ namespace WFCG2Tool
 
         private void PrintWindowNameByProcessId()
         {
-            IntPtr hWnd = WindowHelper.GetProcessWindow(7564);
+            IntPtr hWnd = Native.GetProcessWindow(7564);
             if (hWnd != IntPtr.Zero)
             {
                 StringBuilder sb = new StringBuilder(1024);
-                WindowHelper.GetWindowText(new System.Runtime.InteropServices.HandleRef(this, hWnd), sb, sb.Capacity);
+                Native.GetWindowText(new System.Runtime.InteropServices.HandleRef(this, hWnd), sb, sb.Capacity);
                 Log.Add("hWwnd name: " + sb.ToString());
             }
             else
