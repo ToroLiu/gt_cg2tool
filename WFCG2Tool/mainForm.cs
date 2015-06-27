@@ -22,7 +22,7 @@ namespace WFCG2Tool
 
         private bool IsRunning;
         private DateTime startTime;
-        public static readonly int maxSeconds = 3600;
+        public int maxSeconds;
         
         public mainForm()
         {
@@ -32,7 +32,13 @@ namespace WFCG2Tool
         private void Form1_Load(object sender, EventArgs e)
         {
             Log = new LogViewer(txtBox);
-            Log.Add("Form Loaded....");
+
+            MySetting conf = MySetting.Instance;
+            conf.Load();
+
+            maxSeconds = conf.MaxSeconds;
+            Log.Add("MaxSeconds: " + maxSeconds.ToString());
+            Log.Add("程式開始");
 
             script = new Scripter(Log);
         }
@@ -83,6 +89,8 @@ namespace WFCG2Tool
             // Check time
             DateTime now = DateTime.Now;
             TimeSpan diff = now - startTime;
+            DateTime to = startTime.AddSeconds(maxSeconds);
+
             if (diff.TotalSeconds > maxSeconds)
             {
                 // 先停止
@@ -91,8 +99,11 @@ namespace WFCG2Tool
                 return;
             }
 
-            string msg = string.Format("\r\nTimer tick ... ({0})\r\nTotal seconds: {1}\t Goal seconds: {2}", tickCount, diff.TotalSeconds, maxSeconds);
-            Log.Add(msg);
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("Tick ({0}): total seconds: {1}\r\n", tickCount, diff.TotalSeconds.ToString("0.##"));
+            sb.AppendFormat("停止時間: {0} MaxSeconds:{1}\r\n", to.ToShortTimeString(), maxSeconds);
+            
+            Log.Add(sb.ToString());
 
             tickCount += 1;
 
@@ -141,6 +152,24 @@ namespace WFCG2Tool
             DialogResult result = MessageBox.Show("將要離開這個程式", "警告", MessageBoxButtons.OKCancel);
             if (result == DialogResult.OK) {
                 Application.Exit();
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            FormOption child = new FormOption();
+            if (DialogResult.OK == child.ShowDialog()) {
+                MySetting conf = MySetting.Instance;
+
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("設定參數:");
+                sb.AppendFormat("時間: {0}\r\n", conf.MaxSeconds);
+                sb.AppendFormat("步數: {0}\r\n", conf.LoopMax);
+                sb.AppendFormat("策略: {0}\r\n", conf.Strategy.ToString());
+
+                maxSeconds = conf.MaxSeconds;
+
+                Log.Add(sb.ToString());     
             }
         }
     }

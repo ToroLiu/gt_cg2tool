@@ -47,6 +47,8 @@ namespace WFCG2Tool
             logViewer.Add("Get window success.");
             Native.SetForegroundWindow(hHwnd);
             Native.SetActiveWindow(hHwnd);
+
+            LoadConf();
         }
 
         private static readonly Random rand = new Random();
@@ -54,6 +56,14 @@ namespace WFCG2Tool
         private static int circlrDir = 0;
 
         private BaseStrategy strategy = new BaseStrategy(10, DIR_STATEGY.UP_DOWN);
+
+        public void LoadConf() {
+            MySetting conf = MySetting.Instance;
+            strategy = new BaseStrategy(conf.LoopMax, conf.Strategy);
+
+            String msg = String.Format("步數: {0}  方向: {1}\r\n", conf.LoopMax, conf.Strategy.ToString());
+            logViewer.Add(msg);
+        }
 
         public void RunIt() {
             if (pause)
@@ -101,6 +111,8 @@ namespace WFCG2Tool
         public void Resume() {
             pause = false;
 
+            LoadConf();
+            logViewer.Add("繼續執行");
             Native.SetForegroundWindow(hHwnd);
         }
     }
