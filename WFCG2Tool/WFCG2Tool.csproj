@@ -58,6 +58,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Strategies\BaseStrategy.cs" />
     <Compile Include="LogViewer.cs" />
     <Compile Include="mainForm.cs">
       <SubType>Form</SubType>

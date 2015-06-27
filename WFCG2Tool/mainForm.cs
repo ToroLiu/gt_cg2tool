@@ -22,7 +22,7 @@ namespace WFCG2Tool
 
         private bool IsRunning;
         private DateTime startTime;
-        public static readonly int maxSeconds = 1800;
+        public static readonly int maxSeconds = 3600;
         
         public mainForm()
         {
@@ -58,13 +58,15 @@ namespace WFCG2Tool
         {
             if (timer == null) {
                 timer = new Timer();
-                timer.Interval = 1200 + rand.Next() % 50;
+                timer.Interval = 300;
                 timer.Tick += Timer_Tick;
 
                 Log.Add("Timer is setup...");
             }
 
             this.IsRunning = true;
+            btnPause.Text = "暫停";
+            
             script.Init();
             timer.Start();
             tickCount = 0;
@@ -75,6 +77,7 @@ namespace WFCG2Tool
         {
             if (!IsRunning) {
                 Log.Add("Paused. Skip this tick...");
+                timer.Stop();
                 return;
             }
             // Check time
@@ -88,7 +91,7 @@ namespace WFCG2Tool
                 return;
             }
 
-            string msg = string.Format("\r\nTimer tick ... ({0})\r\nTotal seconds: {1}", tickCount, diff.TotalSeconds );
+            string msg = string.Format("\r\nTimer tick ... ({0})\r\nTotal seconds: {1}\t Goal seconds: {2}", tickCount, diff.TotalSeconds, maxSeconds);
             Log.Add(msg);
 
             tickCount += 1;
@@ -105,11 +108,27 @@ namespace WFCG2Tool
                 return;
             }
 
-            this.IsRunning = false;
-            Log.Add("Pause..... \r\n");
+            if (this.IsRunning)
+            {
+                this.IsRunning = false;
+                Log.Add("Pause..... \r\n");
 
-            script.Stop();
-            timer.Stop();
+                script.Stop();
+                timer.Stop();
+
+                btnPause.Text = "繼續";
+            }
+            else {
+                this.IsRunning = true;
+                Log.Add("Resume .... \r\n");
+
+                script.Resume();
+                timer.Start();
+
+                btnPause.Text = "暫停";
+            }
+
+            
         }
 
         private void btnExit_Click(object sender, EventArgs e)

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using WFCG2Tool.Code;
+using WFCG2Tool.Strategies;
 
 namespace WFCG2Tool
 {
@@ -23,7 +24,7 @@ namespace WFCG2Tool
         public bool pause { get; set; }
         public bool initOK { get; set; }
         public IntPtr lastDir { get; set; }
-        
+
         public Scripter(LogViewer log)
         {
             logViewer = log;
@@ -50,28 +51,22 @@ namespace WFCG2Tool
 
         private static readonly Random rand = new Random();
         private static int invertDir = 0;
-        
-        public void RunIt() {
+        private static int circlrDir = 0;
 
+        private BaseStrategy strategy = new BaseStrategy(10, DIR_STATEGY.UP_DOWN);
+
+        public void RunIt() {
             if (pause)
                 return;
-            
-            Dictionary<int, VirtualKeyCode> dirMap = new Dictionary<int, VirtualKeyCode>() {
-                {0, VirtualKeyCode.LEFT },
-                {1, VirtualKeyCode.RIGHT },
-                {2, VirtualKeyCode.UP },
-                {3, VirtualKeyCode.DOWN },
-            };
-            
-            // Strategy 1: Left & Right
-            //invertDir = (invertDir + 1) % 2;
-            //int dir = invertDir + 2; //< UP & DOWN
-            //int loopMax = 10;
 
-            // Strategy 2: Random walk
-            int dir = rand.Next() % 4;
-            int loopMax = 3;
-                 
+            Dictionary<DIR, VirtualKeyCode> dirMap = new Dictionary<DIR, VirtualKeyCode>() {
+                {DIR.LEFT, VirtualKeyCode.LEFT },
+                {DIR.RIGHT, VirtualKeyCode.RIGHT },
+                {DIR.UP, VirtualKeyCode.UP },
+                {DIR.DOWN, VirtualKeyCode.DOWN },
+            };
+
+            DIR dir = strategy.NextDir();
             VirtualKeyCode key = dirMap[dir];
             
             logViewer.Add(key.ToString());
@@ -80,27 +75,33 @@ namespace WFCG2Tool
             Native.SetActiveWindow(hHwnd);
             Native.keybd_event((byte)VirtualKeyCode.LCONTROL, 0, 0, 0);
 
-            for (int i = 0; i < loopMax; ++i) {
+            for (int i = 0; i < strategy.LoopMax(); ++i) {
                 Native.keybd_event((byte)key, 0, 0, 0);
                 Application.DoEvents();
 
-                Thread.Sleep(500);
+                Thread.Sleep(400 + rand.Next() % 100);
 
                 Native.keybd_event((byte)key, 0, (int)KEYEVENTF.KEYUP, 0);
                 Application.DoEvents();
 
-                Thread.Sleep(100);
+                Thread.Sleep(100 + rand.Next() % 50);
             }
 
             Native.keybd_event((byte)VirtualKeyCode.LCONTROL, 0, (int)KEYEVENTF.KEYUP, 0);
             Application.DoEvents();
+            Thread.Sleep(50 + rand.Next() % 50);
         }
 
         public void Stop() {
             pause = true;
 
             Native.SendMessage(hHwnd, (uint)MSG.WM_KEYUP, (IntPtr)VirtualKeyCode.LCONTROL, IntPtr.Zero);
+        }
 
+        public void Resume() {
+            pause = false;
+
+            Native.SetForegroundWindow(hHwnd);
         }
     }
 }
