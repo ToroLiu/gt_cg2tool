@@ -27,6 +27,7 @@ namespace WFCG2Tool
 
             txtTime.Text = conf.MaxSeconds.ToString();
             txtLoopMax.Text = conf.LoopMax.ToString();
+            chkQuitTeam.Checked = conf.QuitTeam;
 
             cboStrategy.Items.Clear();
 
@@ -61,6 +62,8 @@ namespace WFCG2Tool
             conf.LoopMax = loopMax;
             conf.MaxSeconds = maxSeconds;
             conf.Strategy = selStra.Strategy;
+
+            conf.QuitTeam = chkQuitTeam.Checked;
 
             conf.Save();
 

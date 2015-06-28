@@ -96,12 +96,13 @@ namespace WFCG2Tool
                 // 先停止
                 Log.Add("Exceeds the maxSeconds, force stop.");
                 timer.Stop();
+                script.QuitTeam();
                 return;
             }
 
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("Tick ({0}): total seconds: {1}\r\n", tickCount, diff.TotalSeconds.ToString("0.##"));
-            sb.AppendFormat("停止時間: {0} MaxSeconds:{1}\r\n", to.ToShortTimeString(), maxSeconds);
+            sb.AppendFormat("Tick ({0}): ({2})   total seconds: {1}\r\n", tickCount, diff.TotalSeconds.ToString("0.##"), maxSeconds);
+            sb.AppendFormat("停止時間: {0} \r\n", to.ToShortTimeString());
             
             Log.Add(sb.ToString());
 

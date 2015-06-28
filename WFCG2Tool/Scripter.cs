@@ -83,9 +83,11 @@ namespace WFCG2Tool
             Application.DoEvents();
 
             Native.SetActiveWindow(hHwnd);
-            Native.keybd_event((byte)VirtualKeyCode.LCONTROL, 0, 0, 0);
 
-            for (int i = 0; i < strategy.LoopMax(); ++i) {
+            Native.keybd_event((byte)VirtualKeyCode.LCONTROL, 0, 0, 0);
+            for (int i = 0; i < strategy.LoopMax() && !pause; ++i) {
+                Thread.Sleep(50);
+
                 Native.keybd_event((byte)key, 0, 0, 0);
                 Application.DoEvents();
 
@@ -104,8 +106,7 @@ namespace WFCG2Tool
 
         public void Stop() {
             pause = true;
-
-            Native.SendMessage(hHwnd, (uint)MSG.WM_KEYUP, (IntPtr)VirtualKeyCode.LCONTROL, IntPtr.Zero);
+            Native.keybd_event((byte)VirtualKeyCode.LCONTROL, 0, (int)KEYEVENTF.KEYUP, 0);
         }
 
         public void Resume() {
@@ -114,6 +115,39 @@ namespace WFCG2Tool
             LoadConf();
             logViewer.Add("繼續執行");
             Native.SetForegroundWindow(hHwnd);
+        }
+
+        public void QuitTeam()
+        {
+            // 先檢查
+            bool needQuit = MySetting.Instance.QuitTeam;
+            if (!needQuit) {
+                return;
+            }
+
+            logViewer.Add("解散團隊");
+
+            VirtualKeyCode alt = VirtualKeyCode.LMENU;
+
+            // ALT的vkCode, 是VK_MENU...
+            Native.keybd_event((byte)alt, 0, 0, 0);
+            for (int i = 0; i < 300 && !pause; ++i)
+            {
+                Thread.Sleep(100);
+
+                logViewer.Add("Try " + i);
+                Native.keybd_event((byte)VirtualKeyCode.VK_Q, 0, 0, 0);
+                Application.DoEvents();
+
+                Thread.Sleep(300 + rand.Next() % 200);
+                Native.keybd_event((byte)VirtualKeyCode.VK_Q, 0, (int)KEYEVENTF.KEYUP, 0);
+
+                //! 隔一段時間執行一次…因為可能在戰鬥中。
+                Thread.Sleep(50 + rand.Next() % 50);
+            }
+
+            Native.keybd_event((byte)alt, 0, (int)KEYEVENTF.KEYUP, 0);
+            Application.DoEvents();
         }
     }
 }

@@ -19,12 +19,14 @@ namespace WFCG2Tool
         public int LoopMax { get; set; }
         public int MaxSeconds { get; set; }
         public DIR_STATEGY Strategy { get; set; }
+        public bool QuitTeam { get; set; }
 
         private MySetting()
         {
             LoopMax = 10;
             MaxSeconds = 3600;
             Strategy = DIR_STATEGY.UP_DOWN;
+            QuitTeam = false;
         }
 
         public void Load() {

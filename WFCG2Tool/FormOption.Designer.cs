@@ -36,6 +36,7 @@
             this.txtTime = new System.Windows.Forms.TextBox();
             this.txtLoopMax = new System.Windows.Forms.TextBox();
             this.cboStrategy = new System.Windows.Forms.ComboBox();
+            this.chkQuitTeam = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // btnOK
@@ -107,11 +108,22 @@
             this.cboStrategy.Size = new System.Drawing.Size(121, 20);
             this.cboStrategy.TabIndex = 4;
             // 
+            // chkQuitTeam
+            // 
+            this.chkQuitTeam.AutoSize = true;
+            this.chkQuitTeam.Location = new System.Drawing.Point(12, 124);
+            this.chkQuitTeam.Name = "chkQuitTeam";
+            this.chkQuitTeam.Size = new System.Drawing.Size(144, 16);
+            this.chkQuitTeam.TabIndex = 6;
+            this.chkQuitTeam.Text = "時間結束，解取團隊。";
+            this.chkQuitTeam.UseVisualStyleBackColor = true;
+            // 
             // FormOption
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(276, 319);
+            this.Controls.Add(this.chkQuitTeam);
             this.Controls.Add(this.cboStrategy);
             this.Controls.Add(this.txtLoopMax);
             this.Controls.Add(this.txtTime);
@@ -138,5 +150,6 @@
         private System.Windows.Forms.TextBox txtTime;
         private System.Windows.Forms.TextBox txtLoopMax;
         private System.Windows.Forms.ComboBox cboStrategy;
+        private System.Windows.Forms.CheckBox chkQuitTeam;
     }
 }
