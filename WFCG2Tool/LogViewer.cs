@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 using System.Windows.Forms;
 
 namespace WFCG2Tool
@@ -38,7 +38,11 @@ namespace WFCG2Tool
             foreach (String s in msg) {
                 sb.AppendLine(s);                
             }
-            LogTextBox.Text = sb.ToString();
+            
+            // For thread-safe update
+            LogTextBox.Invoke((MethodInvoker)delegate{
+                LogTextBox.Text = sb.ToString();
+            });
         }
     }
 }

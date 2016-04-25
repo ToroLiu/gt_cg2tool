@@ -37,6 +37,8 @@
             this.txtLoopMax = new System.Windows.Forms.TextBox();
             this.cboStrategy = new System.Windows.Forms.ComboBox();
             this.chkQuitTeam = new System.Windows.Forms.CheckBox();
+            this.txtRandom = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnOK
@@ -80,7 +82,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 87);
+            this.label3.Location = new System.Drawing.Point(12, 114);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(29, 12);
             this.label3.TabIndex = 1;
@@ -103,7 +105,7 @@
             // cboStrategy
             // 
             this.cboStrategy.FormattingEnabled = true;
-            this.cboStrategy.Location = new System.Drawing.Point(99, 84);
+            this.cboStrategy.Location = new System.Drawing.Point(99, 111);
             this.cboStrategy.Name = "cboStrategy";
             this.cboStrategy.Size = new System.Drawing.Size(121, 20);
             this.cboStrategy.TabIndex = 4;
@@ -111,18 +113,36 @@
             // chkQuitTeam
             // 
             this.chkQuitTeam.AutoSize = true;
-            this.chkQuitTeam.Location = new System.Drawing.Point(12, 124);
+            this.chkQuitTeam.Location = new System.Drawing.Point(12, 155);
             this.chkQuitTeam.Name = "chkQuitTeam";
             this.chkQuitTeam.Size = new System.Drawing.Size(144, 16);
             this.chkQuitTeam.TabIndex = 6;
             this.chkQuitTeam.Text = "時間結束，解取團隊。";
             this.chkQuitTeam.UseVisualStyleBackColor = true;
             // 
+            // txtRandom
+            // 
+            this.txtRandom.Location = new System.Drawing.Point(99, 82);
+            this.txtRandom.Name = "txtRandom";
+            this.txtRandom.Size = new System.Drawing.Size(107, 22);
+            this.txtRandom.TabIndex = 8;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 85);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(53, 12);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "亂數因子";
+            // 
             // FormOption
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(276, 319);
+            this.Controls.Add(this.txtRandom);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.chkQuitTeam);
             this.Controls.Add(this.cboStrategy);
             this.Controls.Add(this.txtLoopMax);
@@ -151,5 +171,7 @@
         private System.Windows.Forms.TextBox txtLoopMax;
         private System.Windows.Forms.ComboBox cboStrategy;
         private System.Windows.Forms.CheckBox chkQuitTeam;
+        private System.Windows.Forms.TextBox txtRandom;
+        private System.Windows.Forms.Label label4;
     }
 }

@@ -64,7 +64,7 @@ namespace WFCG2Tool
         {
             if (timer == null) {
                 timer = new Timer();
-                timer.Interval = 300;
+                timer.Interval = 50;
                 timer.Tick += Timer_Tick;
 
                 Log.Add("Timer is setup...");
@@ -111,6 +111,10 @@ namespace WFCG2Tool
             timer.Stop();
             script.RunIt();
             timer.Start();
+
+            if (tickCount % 5 == 0) {
+                script.SetAppFocus();      
+            }
         }
 
         private void btnPause_Click(object sender, EventArgs e)
@@ -122,25 +126,23 @@ namespace WFCG2Tool
 
             if (this.IsRunning)
             {
+                btnPause.Text = "繼續";
+
                 this.IsRunning = false;
                 Log.Add("Pause..... \r\n");
 
                 script.Stop();
                 timer.Stop();
-
-                btnPause.Text = "繼續";
             }
             else {
+                btnPause.Text = "暫停";
+
                 this.IsRunning = true;
                 Log.Add("Resume .... \r\n");
 
                 script.Resume();
                 timer.Start();
-
-                btnPause.Text = "暫停";
             }
-
-            
         }
 
         private void btnExit_Click(object sender, EventArgs e)

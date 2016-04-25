@@ -27,7 +27,9 @@ namespace WFCG2Tool
 
             txtTime.Text = conf.MaxSeconds.ToString();
             txtLoopMax.Text = conf.LoopMax.ToString();
+            txtRandom.Text = conf.RandomFactor.ToString();
             chkQuitTeam.Checked = conf.QuitTeam;
+            
 
             cboStrategy.Items.Clear();
 
@@ -35,6 +37,8 @@ namespace WFCG2Tool
                 new OptionStrategy(DIR_STATEGY.UP_DOWN, "上下移動"),
                 new OptionStrategy(DIR_STATEGY.LEFT_RIGHT, "左右移動"),
                 new OptionStrategy(DIR_STATEGY.CIRCLE, "繞圈圈"),
+                new OptionStrategy(DIR_STATEGY.LT_RB, "左上_右下"),
+                new OptionStrategy(DIR_STATEGY.RT_LB, "右上_左下"),
             };
 
             cboStrategy.Items.AddRange(options.ToArray());
@@ -55,6 +59,7 @@ namespace WFCG2Tool
             // Save configuration
             int loopMax = Convert.ToInt32(txtLoopMax.Text);
             int maxSeconds = Convert.ToInt32(txtTime.Text);
+            int randomFactor = Convert.ToInt32(txtRandom.Text);
 
             OptionStrategy selStra = (OptionStrategy)cboStrategy.SelectedItem;
 
@@ -62,6 +67,7 @@ namespace WFCG2Tool
             conf.LoopMax = loopMax;
             conf.MaxSeconds = maxSeconds;
             conf.Strategy = selStra.Strategy;
+            conf.RandomFactor = randomFactor;
 
             conf.QuitTeam = chkQuitTeam.Checked;
 

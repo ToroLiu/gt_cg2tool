@@ -51,57 +51,68 @@ namespace WFCG2Tool
             LoadConf();
         }
 
+        public void SetAppFocus()
+        {
+            Native.SetForegroundWindow(hHwnd);
+            Native.SetActiveWindow(hHwnd);
+
+            logViewer.Add("SetAppFocus()");
+        }
+
         private static readonly Random rand = new Random();
         private static int invertDir = 0;
         private static int circlrDir = 0;
 
-        private BaseStrategy strategy = new BaseStrategy(10, DIR_STATEGY.UP_DOWN);
+        private BaseStrategy strategy = new BaseStrategy(10, 1, DIR_STATEGY.UP_DOWN);
 
         public void LoadConf() {
             MySetting conf = MySetting.Instance;
-            strategy = new BaseStrategy(conf.LoopMax, conf.Strategy);
+
+            switch (conf.Strategy) {
+                case DIR_STATEGY.UP_DOWN:
+                case DIR_STATEGY.LEFT_RIGHT:
+                case DIR_STATEGY.CIRCLE:
+                    strategy = new BaseStrategy(conf.LoopMax, conf.RandomFactor, conf.Strategy);
+                    break;
+
+                case DIR_STATEGY.RT_LB:
+                    strategy = new RightTopStrategy(conf.LoopMax, conf.RandomFactor);
+                    break;
+
+                case DIR_STATEGY.LT_RB:
+                    strategy = new TopLeftStrategy(conf.LoopMax, conf.RandomFactor);
+                    break;
+            }
 
             String msg = String.Format("步數: {0}  方向: {1}\r\n", conf.LoopMax, conf.Strategy.ToString());
             logViewer.Add(msg);
         }
 
+        private int SLEEP_BASE = 10;
+
         public void RunIt() {
             if (pause)
                 return;
 
-            Dictionary<DIR, VirtualKeyCode> dirMap = new Dictionary<DIR, VirtualKeyCode>() {
-                {DIR.LEFT, VirtualKeyCode.LEFT },
-                {DIR.RIGHT, VirtualKeyCode.RIGHT },
-                {DIR.UP, VirtualKeyCode.UP },
-                {DIR.DOWN, VirtualKeyCode.DOWN },
-            };
-
-            DIR dir = strategy.NextDir();
-            VirtualKeyCode key = dirMap[dir];
-            
-            logViewer.Add(key.ToString());
+            logViewer.Add("PrepareNextAction");
+            strategy.PrepareNextAction();
             Application.DoEvents();
 
             Native.SetActiveWindow(hHwnd);
 
             Native.keybd_event((byte)VirtualKeyCode.LCONTROL, 0, 0, 0);
-            for (int i = 0; i < strategy.LoopMax() && !pause; ++i) {
-                Thread.Sleep(50);
+            for (int i = 0; i < strategy.LoopMax() && !pause; ++i)
+            {
+                Thread.Sleep(SLEEP_BASE);
+                strategy.DoAction();
 
-                Native.keybd_event((byte)key, 0, 0, 0);
+                Thread.Sleep(SLEEP_BASE + rand.Next() % 10);
                 Application.DoEvents();
-
-                Thread.Sleep(400 + rand.Next() % 100);
-
-                Native.keybd_event((byte)key, 0, (int)KEYEVENTF.KEYUP, 0);
-                Application.DoEvents();
-
-                Thread.Sleep(100 + rand.Next() % 50);
             }
 
             Native.keybd_event((byte)VirtualKeyCode.LCONTROL, 0, (int)KEYEVENTF.KEYUP, 0);
             Application.DoEvents();
-            Thread.Sleep(50 + rand.Next() % 50);
+            Thread.Sleep(SLEEP_BASE);
         }
 
         public void Stop() {

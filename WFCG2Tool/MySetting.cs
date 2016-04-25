@@ -20,6 +20,7 @@ namespace WFCG2Tool
         public int MaxSeconds { get; set; }
         public DIR_STATEGY Strategy { get; set; }
         public bool QuitTeam { get; set; }
+        public int RandomFactor { get; set; }
 
         private MySetting()
         {

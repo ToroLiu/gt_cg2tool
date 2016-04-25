@@ -77,6 +77,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scripter.cs" />
+    <Compile Include="Strategies\RightTopStrategy.cs" />
+    <Compile Include="Strategies\TopLeftStrategy.cs" />
     <Compile Include="WindowHelper.cs" />
     <EmbeddedResource Include="FormOption.resx">
       <DependentUpon>FormOption.cs</DependentUpon>
